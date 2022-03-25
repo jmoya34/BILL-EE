@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-from inputs import devices
-import time
-from test import XboxController
-=======
 from inputs import get_gamepad
 import math
 import threading
-import time 
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -38,43 +32,8 @@ class XboxController(object):
         self._monitor_thread = threading.Thread(target=self._monitor_controller, args=())
         self._monitor_thread.daemon = True
         self._monitor_thread.start()
->>>>>>> 9ac36242b4a7c79df6dd6fdfcab1a3aa44646197
-
-deadzone = 4/100        #4% deadzone 
-
-<<<<<<< HEAD
-def findController():
-    try:
-        devices.gamepad
-        return True
-    except:
-        print('No controllers are connected')
 
 
-def setDeadZone(deadZone:int):
-    deadzone = deadZone / 100
-
-
-def calibration(info: list):
-    tempList = []
-    for data in info:
-        if data < deadzone:
-            tempList.append(0)
-        else:
-            tempList.append(data)
-    return tempList
-
-
-def main():
-    joy = XboxController()
-    while True:
-        print(calibration(joy.read()) )
-        time.sleep(.01)
-
-
-main()
-print("task ended")
-=======
     def read(self): # return the buttons/triggers that you care about in this methode
         x = self.LeftJoystickX
         y = self.LeftJoystickY
@@ -82,7 +41,7 @@ print("task ended")
         b = self.X # b=1, x=2
         rb = self.RightBumper
         lb = self.LeftBumper
-        return [x, y, a, b, rb, lb]
+        return [x, y, a, b, lb, rb]
 
 
     def _monitor_controller(self):
@@ -129,13 +88,3 @@ print("task ended")
                     self.UpDPad = event.state
                 elif event.code == 'BTN_TRIGGER_HAPPY4':
                     self.DownDPad = event.state
-
-
-
-
-if __name__ == '__main__':
-    joy = XboxController()
-    while True:
-        print(joy.read())
-        time.sleep(.5)
->>>>>>> 9ac36242b4a7c79df6dd6fdfcab1a3aa44646197
