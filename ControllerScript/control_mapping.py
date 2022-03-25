@@ -34,14 +34,24 @@ class XboxController(object):
         self._monitor_thread.daemon = True
         self._monitor_thread.start()
 
+    def setDeadZone(self,deadZone = 10) -> int:
+        return deadZone / 100                   # Deadzone is calculated as percentage
 
-    def read(self): # return the buttons/triggers that you care about in this methode
+    def read(self) -> list: # return the buttons/triggers that you care about in this method
         x = self.LeftJoystickX
         y = self.LeftJoystickY
         a = self.A
         b = self.X # b=1, x=2
         rb = self.RightBumper
         lb = self.LeftBumper
+
+        deadzone = self.setDeadZone()
+
+        if(abs(x) <= deadzone):
+            x = 0
+        if(abs(y) <= deadzone):
+            y = 0
+        
         return [x, y, rb, lb]
 
 
