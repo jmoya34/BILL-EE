@@ -34,25 +34,38 @@ class XboxController(object):
         self._monitor_thread.daemon = True
         self._monitor_thread.start()
 
-    def setDeadZone(self,deadZone = 10) -> int:
-        return deadZone / 100                   # Deadzone is calculated as percentage
+    def set_deadzone(self, joyaxis: int, deadzone = 10) -> None:
+        
+        """Joystick is extremely sensitive
+         We must add a zone where inputs are not read to negate accidental input.
+         The default deadzone is 10 percent of the maximum travel of the joystick.  
+        """
+        negate = deadzone / 100
+        if(abs(joyaxis) <= negate):
+            return 0
+        else:
+            return joyaxis
+                        
 
     def read(self) -> list: # return the buttons/triggers that you care about in this method
-        x = self.LeftJoystickX
-        y = self.LeftJoystickY
-        a = self.A
-        b = self.X # b=1, x=2
+        """Allows you to configure which inputs to be read
+
+        In here you can map every button to a variable, 
+        Create more variables to add more inputs in here. 
+        Note: if you do want to use the second joystick, 
+        repeat set_deadzone method for the second joystick
+        """
+        lx = self.LeftJoystickX
+        ly = self.LeftJoystickY
+        a  = self.A
+        b  = self.B 
         rb = self.RightBumper
         lb = self.LeftBumper
-
-        deadzone = self.setDeadZone()
-
-        if(abs(x) <= deadzone):
-            x = 0
-        if(abs(y) <= deadzone):
-            y = 0
         
-        return [x, y, rb, lb]
+        lx = self.set_deadzone(lx)
+        ly = self.set_deadzone(ly)
+
+        return [lx, ly, rb, lb, a, b]
 
 
     def _monitor_controller(self):

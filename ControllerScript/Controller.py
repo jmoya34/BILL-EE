@@ -2,7 +2,7 @@ from inputs import devices
 import time
 from control_mapping import XboxController
 
-def findController() -> bool:
+def findController() -> bool:   # Doesn't work as of now
     try:
         devices.gamepad
         return True
@@ -11,12 +11,12 @@ def findController() -> bool:
 
 
 
-def main():
+
+
+if __name__ == '__main__':
     joy = XboxController()
-                           
-    while True:
+    findController()                     
+    while True:             
         print(joy.read())
         time.sleep(.01)
 
-main()
-print("task ended")
