@@ -1,2 +1,1 @@
-#via pip
-pip install inputs
+inputs==0.5
