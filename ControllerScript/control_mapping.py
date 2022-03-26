@@ -34,9 +34,9 @@ class XboxController(object):
         self._monitor_thread.daemon = True
         self._monitor_thread.start()
 
-    def set_deadzone(self, joyaxis: int, deadzone = 10) -> None:
-        
+    def set_deadzone(self, joyaxis: int, deadzone = 10) -> int:
         """Joystick is extremely sensitive
+        
          We must add a zone where inputs are not read to negate accidental input.
          The default deadzone is 10 percent of the maximum travel of the joystick.  
         """
