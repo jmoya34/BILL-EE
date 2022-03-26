@@ -1,7 +1,6 @@
 from inputs import get_gamepad
 import math
 import threading
-import time 
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -113,11 +112,3 @@ class XboxController(object):
                 elif event.code == 'BTN_TRIGGER_HAPPY4':
                     self.DownDPad = event.state
 
-
-
-
-if __name__ == '__main__':
-    joy = XboxController()
-    while True:
-        print(joy.read())
-        time.sleep(.5)
