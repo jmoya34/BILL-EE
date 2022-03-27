@@ -15,7 +15,7 @@ print("[INFO] Camera ready.")
 print("[INFO] Loading model...")
 
 # Jason I working on the model installation scriptt
-PATH_TO_CKPT = "" # Can be any model from model zoo. Pbtxt files and model can be downloaded from modelInstallToolsFile
+PATH_TO_CKPT = "saved_model.pb" # Can be any model from model zoo. Pbtxt files and model can be downloaded from modelInstallToolsFile
 
 # Load the Tensorflow model into memory.
 detection_graph = tf.Graph()
