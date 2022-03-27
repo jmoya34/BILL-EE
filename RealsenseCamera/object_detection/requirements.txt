@@ -3,4 +3,4 @@ pyrealsense2==2.50.0.3812
 numpy==1.22.3
 opencv-python==4.5.5.64
 tensorflow==2.3.0
-request==2.27.1
+requests==2.27.1
