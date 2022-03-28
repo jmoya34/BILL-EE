@@ -1,1 +1,3 @@
-place holder
+#spidev may need more steps
+pyserial==3.5
+sparkfun-ublox-gps==1.1.4
