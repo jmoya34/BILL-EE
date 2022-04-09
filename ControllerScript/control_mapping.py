@@ -46,7 +46,7 @@ class XboxController(object):
             return joyaxis
                         
 
-    def read(self) -> list: # return the buttons/triggers that you care about in this method
+    def read(self) -> list: # return the buttons/triggers that you care about in this method r type is decimal
         """Allows you to configure which inputs to be read
 
         In here you can map every button to a variable, 
