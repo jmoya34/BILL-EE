@@ -21,8 +21,11 @@ def server(IP: str, port_num: int, encode: str, any_obj :any) -> None:
         msg = bytes(f"{len(msg):<{HEADERSIZE}}", encode)+msg
         print(msg)
         clientsocket.send(msg)
+        return
         
 
 
 if __name__ == "__main__":
-    server("192.168.1.86",9999,"utf-8", {1:"hi", 2: "there"})
+    while True:
+        server("192.168.254.73",9999,"utf-8", [1.0, 0.147, 0.347, 0.532])
+        time.sleep(.1)

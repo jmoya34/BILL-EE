@@ -30,7 +30,10 @@ def client(IP :str, port_num: int, decode: str) -> None:
                 print(pickle.loads(full_msg[HEADERSIZE:]))
                 new_msg = True
                 full_msg = b""
+                return
 
 
 if __name__ == "__main__":
-    client("192.168.1.86",9999,"utf-8")
+    while True:
+        client("192.168.254.73",9999,"utf-8")
+        time.sleep(.1)
