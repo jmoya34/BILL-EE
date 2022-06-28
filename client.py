@@ -1,4 +1,3 @@
-from re import S
 import socket
 import time
 import pickle
@@ -36,6 +35,8 @@ def client(IP :str, port_num: int, decode: str) -> None:
 
 
 if __name__ == "__main__":
-    while True:
-        client(socket.gethostname(),9999,"utf-8")
-        time.sleep(.15)
+    # while True:
+    #     client(socket.gethostname(),9999,"utf-8")
+    #     time.sleep(.15)
+
+    print(type([1.394, 0.1329, 0.1203, 0.5823]))
