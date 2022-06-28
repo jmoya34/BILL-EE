@@ -1,8 +1,8 @@
-import time
 import socket
 import time
 import pickle
-from control_mapping import XboxController
+
+
 
 def server(IP: str, port_num: int, encode: str, any_obj :any) -> None:
     HEADERSIZE = 10
@@ -23,11 +23,10 @@ def server(IP: str, port_num: int, encode: str, any_obj :any) -> None:
         print(msg)
         clientsocket.send(msg)
         return
+        
 
 
-if __name__ == '__main__':
-    joy = XboxController()
+if __name__ == "__main__":
     while True:
-        # print(joy.read()) # if server isn't working first debug the controller to ensure the object is correct
-        server(socket.gethostname(),9999,"utf-8", joy.read()) # The ip address differs between users
+        server(socket.gethostname(),9999,"utf-8", [1.0, 0.147, 0.347, 0.532])
         time.sleep(.1)
