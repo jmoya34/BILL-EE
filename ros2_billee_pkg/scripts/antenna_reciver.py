@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
+
 from std_msgs.msg import Float64MultiArray
 import socket
 import time 
@@ -8,6 +9,8 @@ import pickle
 
 
 class ContInputPublisher(Node):
+    
+    # inputs = [float(0), float(0), float(0), float(0)]
 
     def __init__(self):
         super().__init__("controller_inputs_pub_node")
@@ -19,6 +22,7 @@ class ContInputPublisher(Node):
         msg = Float64MultiArray()
         try:
             msg.data = self.client(port_num=9999, decode="utf-8") # call to the client code here
+            print("Value inside msg is: ", msg.data)
         except:
             msg.data = [float(0),float(0),float(0),float(0)]
         self.pub.publish(msg)
@@ -42,23 +46,23 @@ class ContInputPublisher(Node):
                     new_msg = False
 
                 print(f"full message length: {msglen}")
+
                 full_msg += msg
+
                 print(len(full_msg))
+
                 if len(full_msg)-HEADERSIZE == msglen:
                     print("full msg recvd")
                     print(full_msg[HEADERSIZE:])
                     print(pickle.loads(full_msg[HEADERSIZE:]))
-                    new_msg = True
-                    full_msg = b""
-                    print(type(full_msg))
-                    return full_msg
+                    return pickle.loads(full_msg[HEADERSIZE:])
 
 def main():
     rclpy.init()
 
     my_pub = ContInputPublisher()
 
-    print("Controler Inputs Publisher Node Running...")
+    print("Recieving inputs node running...")
 
     try:
         rclpy.spin(my_pub)
