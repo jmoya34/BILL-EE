@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
 
@@ -21,10 +22,14 @@ class ContInputPublisher(Node):
     def publish_cont_inputs(self):
         msg = Float64MultiArray()
         try:
-            msg.data = self.client(port_num=9999, decode="utf-8") # call to the client code here
+            temp_data = self.client(port_num=9999, decode="utf-8") # call to the client code here
+            msg.data = [float(temp_data[0]), float(temp_data[1]), float(temp_data[2]), float(temp_data[3])]
+
             print("Value inside msg is: ", msg.data)
         except:
             msg.data = [float(0),float(0),float(0),float(0)]
+            print("Value inside msg is:", msg.data)
+
         self.pub.publish(msg)
 
     def client(IP :str, port_num: int, decode: str) -> None:
