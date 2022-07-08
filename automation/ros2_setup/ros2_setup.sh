@@ -37,11 +37,11 @@ git checkout ros_bille_pkg
 git pull
 
 #moving around files
-mv '/home/moya/Desktop/ros2_workspace/billee_ws/src/BILL-EE/launch' '/home/moya/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
-mv '/home/moya/Desktop/ros2_workspace/billee_ws/src/BILL-EE/scripts' '/home/moya/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
-mv '/home/moya/Desktop/ros2_workspace/billee_ws/src/BILL-EE/CMakeLists.txt' '/home/moya/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
-mv '/home/moya/Desktop/ros2_workspace/billee_ws/src/BILL-EE/package.xml' '/home/moya/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
-rm '/home/moya/Desktop/ros2_workspace/billee_ws/src/BILL-EE'
+mv '/home/billee/Desktop/ros2_workspace/billee_ws/src/BILL-EE/launch' '/home/billee/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
+mv '/home/billee/Desktop/ros2_workspace/billee_ws/src/BILL-EE/scripts' '/home/billee/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
+mv '/home/billee/Desktop/ros2_workspace/billee_ws/src/BILL-EE/CMakeLists.txt' '/home/billee/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
+mv '/home/billee/Desktop/ros2_workspace/billee_ws/src/BILL-EE/package.xml' '/home/billee/Desktop/ros2_workspace/billee_ws/src/billee_pkg'
+rm '/home/billee/Desktop/ros2_workspace/billee_ws/src/BILL-EE'
 
 # Build Package
 cd ~/Desktop/ros2_workspace
