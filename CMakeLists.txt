@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ros_learning_pkg)
+project(billee_pkg)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
