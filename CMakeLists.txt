@@ -26,6 +26,9 @@ install(PROGRAMS
 scripts/antenna_reciver.py
 scripts/camera_record.py
 scripts/camera_server.py
+scripts/gps_i2c.py
+scripts/send_conditions.py
+scripts/jetson_uart.py
 DESTINATION lib/${PROJECT_NAME}
 )
 
