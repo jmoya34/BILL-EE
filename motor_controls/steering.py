@@ -1,9 +1,11 @@
-from roboclaw import RoboClaw
+from roboclaw_3 import Roboclaw
 from threading import Thread
 import math
 from inputs import devices
 import time
 from control_mapping import XboxController
+import threading
+from adafruit_servokit import ServoKit
 
 # Rover dimensions
 RADIUS = 1
@@ -13,42 +15,64 @@ D3 = 1
 D4 = 1
 
 # Motor speeds
-MAX_SPEED = 250
+MAX_SPEED = 127
 MIN_SPEED = 30
 
 address = [0x81, 0x82, 0x83]
-roboclaw = RoboClaw("/dev/ttyS0", 38400)
+roboclaw = Roboclaw("/dev/ttyS0", 38400)
 roboclaw.Open()
 
-roboclaw.ForwardM1(address,
-                   int(MAX_SPEED * 0.252))  # 0.252 represents controller input
+# roboclaw.ForwardM1(address, int(MAX_SPEED * 0.252))  # 0.252 represents controller input 
 
 
-def move_forward(address, speed):
-    for current_speed in range(0, speed + 1):
-        roboclaw.ForwardM1(address, current_speed)
-        roboclaw.ForwardM2(address, current_speed)
+def move_forward(roboclaws, speed):
+    # for address in roboclaws:
+    #     print(speed)
+    #     roboclaw.ForwardM1(address, speed)
+    #     roboclaw.ForwardM2(address, speed)
+    print("moving forward at", roboclaws)
+    roboclaw.ForwardM1(0x81, speed)
 
 
-def move_backwards(address, speed):
-    for current_speed in range(0, speed + 1):
-        roboclaw.BackwardM1(address, current_speed)
-        roboclaw.BackwardM2(address, current_speed)
+def move_backwards(roboclaws, speed):
+    for address in roboclaws:
+        print(speed)
+        roboclaw.BackwardM1(address, speed)
+        roboclaw.BackwardM2(address, speed)
 
 
-def move_turn(address, speed):
-    # Todo: set corners positions later and get direction
+def move_turn(address, speed, angle_input):
+        # Todo: set corners positions later and get direction
     direction = True  # if controller values (+) True, else False
+    kit = ServoKit(channels = 16)
+    
+    kit.servo[0].angle = 68
+    kit.servo[1].angle = 68
+    kit.servo[2].angle = 68
+    kit.servo[3].angle = 68
 
+    max_turning_angle = 68
+    
     # roboclaw 0x81 controls 1, 4 (front wheels)
     # roboclaw 0x82 controls 2, 5 (middle wheels)
     # roboclaw 0x83 controls 3, 6 (back wheels)
+
+    if angle_input > 0:
+        kit.servo[0].angle = 68 + max_turning_angle*(angle_input)
+        kit.servo[1].angle = 68 + max_turning_angle*(angle_input)
+        kit.servo[2].angle = 68 - max_turning_angle*(angle_input)
+        kit.servo[3].angle = 68 - max_turning_angle*(angle_input)  
+
+    elif angle_input < 0:
+        kit.servo[0].angle = 68 - max_turning_angle*(angle_input)
+        kit.servo[1].angle = 68 - max_turning_angle*(angle_input)
+        kit.servo[2].angle = 68 + max_turning_angle*(angle_input)
+        kit.servo[3].angle = 68 + max_turning_angle*(angle_input)
     motor_velocities = calculate_motor_velocity(D1, D2, D3, D4, RADIUS, speed,
                                                 direction)
 
     for single_roboclaw in address:
-        Thread(
-            target=set_motor_speed(single_roboclaw, motor_velocities)).start()
+        Thread(target=set_motor_speed(single_roboclaw, motor_velocities)).start()
 
 
 def set_motor_speed(address, set_speed):
@@ -99,22 +123,29 @@ so arr[0] will control speed
 and arr[-1] will control turning
 '''
 
-left_stick_controller_input = 1  # controls speed
-right_stick_controller_input = 0  # controls turning
 
 # the right stick inputs should be made so the move_turn method is included already and doesn't have to be called to everytime
-if left_stick_controller_input > 0:
-    move_forward(address, int(MAX_SPEED * left_stick_controller_input))
-else:
-    move_backwards(address,
-                   int(MAX_SPEED * math.abs(left_stick_controller_input)))
 
-if right_stick_controller_input > 0:
-    move_turn(address, int(MAX_SPEED * right_stick_controller_input))
-else:
-    move_turn(address, int(MAX_SPEED * math.abs(right_stick_controller_input)))
 
-joy = XboxController()                 
+joy = XboxController()   
+
 while True:             
     print(joy.read())
-    time.sleep(.01)
+    left_stick_controller_input = joy.read()[0]  # controls speed
+    right_stick_controller_input = joy.read()[1]  # controls turning
+    time.sleep(.15)
+    
+    print(left_stick_controller_input)
+    print(right_stick_controller_input)
+
+    if left_stick_controller_input > 0.15:
+        print("this is true")
+        speed = int(MAX_SPEED * left_stick_controller_input)
+        threading.Thread(target=(move_forward), args=(address, 50)).start()
+        
+    # elif left_stick_controller_input < -0.15:
+    #     speed = int(MAX_SPEED * -1 * left_stick_controller_input)
+    #     threading.Thread(target=(move_backwards), args=(address, speed)).start()
+    else:
+        speed = 0
+        threading.Thread(target=(move_forward), args=(address, speed)).start()
