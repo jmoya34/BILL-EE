@@ -4,8 +4,8 @@ import pickle
 import struct
 import imutils
 
-client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host_ip = socket.gethostname()
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+host_ip = "192.168.254.162"
 port = 10050
 client_socket.connect((host_ip,port)) 
 data = b""

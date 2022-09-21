@@ -28,5 +28,5 @@ def server(IP: str, port_num: int, encode: str, any_obj :any) -> None:
 
 if __name__ == "__main__":
     while True:
-        server(socket.gethostname(),9999,"utf-8", [1.0, 0.147, 0.347, 0.532])
+        server("192.168.56.1",9999,"utf-8", [1.0, 0.147, 0.347, 0.532])
         time.sleep(.1)
