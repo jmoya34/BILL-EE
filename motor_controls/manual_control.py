@@ -66,17 +66,26 @@ def control_servo(D1, D2, D3, D4, RADIUS, direction):
     # roboclaw 0x82 controls 2, 5 (middle wheels)
     # roboclaw 0x83 controls 3, 6 (back wheels)
 
-    if angle_input > 0:
+    if angle_input[0] > 0:
         kit.servo[0].angle = 68 + (angle_input[0]) 
-        kit.servo[1].angle = 68 + (angle_input[1])
-        kit.servo[2].angle = 68 - (angle_input[2])
-        kit.servo[3].angle = 68 - (angle_input[3])  
+    else:
+      kit.servo[0].angle = 68 - (angle_input[0])
 
-    elif angle_input < 0:
-        kit.servo[0].angle = 68 - (angle_input[0])
-        kit.servo[1].angle = 68 - (angle_input[1])
-        kit.servo[2].angle = 68 + (angle_input[2])
-        kit.servo[3].angle = 68 + (angle_input[3])
+    if angle_input[1] > 0:    
+        kit.servo[1].angle = 68 + (angle_input[1])
+    else:
+      kit.servo[1].angle = 68 - (angle_input[1])
+    
+    if angle_input[2] > 0:
+        kit.servo[2].angle = 68 - (angle_input[2])
+    else:
+      kit.servo[2].angle = 68 + (angle_input[2])
+
+    if angle_input[3] > 0:
+        kit.servo[3].angle = 68 - (angle_input[3])  
+    else:
+      kit.servo[3].angle = 68 + (angle_input[3])
+
 
 
 def calculate_motor_velocity(D1, D2, D3, D4, RADIUS, speed, direction):
