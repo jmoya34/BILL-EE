@@ -1,11 +1,15 @@
 from roboclaw_3 import Roboclaw
-from adafruit_servokit import ServoKit
 import math
 from inputs import devices
 import time
 from control_mapping import XboxController
 from datetime import datetime
 
+from board import SCL, SDA
+import busio
+
+from adafruit_motor import servo
+from adafruit_pca9685 import PCA9685
 
 
 # Rover dimensions
@@ -30,7 +34,18 @@ roboclaw2.Open()
 roboclaw3.Open()
 
 # servo initialization
-kit = ServoKit(channels = 16)
+#servos used: Drfeify 70kg, 330Hz, 500-2500Us
+i2c = busio.I2C(SCL, SDA)
+servoDriver = PCA9685(i2c)
+servoDriver.frequency = 330
+minPulse = 500
+maxPulse = 2500
+servo1 = servo.Servo(servoDriver.channels[0], min_pulse=minPulse, max_pulse=maxPulse)
+servo2 = servo.Servo(servoDriver.channels[1], min_pulse=minPulse, max_pulse=maxPulse)
+servo3 = servo.Servo(servoDriver.channels[2], min_pulse=minPulse, max_pulse=maxPulse)
+servo4 = servo.Servo(servoDriver.channels[3], min_pulse=minPulse, max_pulse=maxPulse)
+
+
 RADIUS = 1
 maxRADIUS = 100 # maximum turning radius
 minRADIUS = 20 #
@@ -85,35 +100,35 @@ def control_servo(D1, D2, D3, D4, RADIUS, direction):
     # Calculate servo angle returns list in order of front left, front right, back left, back right
   
     angle_input = calculate_servo_angle(D1, D2, D3, D4, RADIUS, direction) # returns a list
-    
-    kit.servo[0].angle = 68 # The middle point of each servo is 68*
-    kit.servo[1].angle = 68 
-    kit.servo[2].angle = 68
-    kit.servo[3].angle = 68
+    mid_angle = 90
+    servo1.angle = mid_angle # The middle point of each servo is 68*
+    servo2.angle = mid_angle 
+    servo3.angle = mid_angle
+    servo4.angle = mid_angle
     
     # roboclaw 0x81 controls 1, 4 (front wheels)
     # roboclaw 0x82 controls 2, 5 (middle wheels)
     # roboclaw 0x83 controls 3, 6 (back wheels)
 
     if angle_input[0] > 0:
-        kit.servo[0].angle = 68 + (angle_input[0]) 
+        servo1.angle = mid_angle + (angle_input[0]) 
     else:
-      kit.servo[0].angle = 68 - (angle_input[0])
+      servo1.angle = mid_angle - (angle_input[0])
 
     if angle_input[1] > 0:    
-        kit.servo[1].angle = 68 + (angle_input[1])
+        servo2.angle = mid_angle + (angle_input[1])
     else:
-      kit.servo[1].angle = 68 - (angle_input[1])
+      servo2.angle = mid_angle - (angle_input[1])
     
     if angle_input[2] > 0:
-        kit.servo[2].angle = 68 - (angle_input[2])
+        servo3.angle = mid_angle - (angle_input[2])
     else:
-      kit.servo[2].angle = 68 + (angle_input[2])
+      servo3.angle = mid_angle + (angle_input[2])
 
     if angle_input[3] > 0:
-        kit.servo[3].angle = 68 - (angle_input[3])  
+        servo4.angle = mid_angle - (angle_input[3])  
     else:
-      kit.servo[3].angle = 68 + (angle_input[3])
+      servo4.angle = mid_angle + (angle_input[3])
 
 
 
@@ -171,16 +186,17 @@ and arr[-1] will control turning
 # the right stick inputs should be made so the move_turn method is included already and doesn't have to be called to everytime
 
 joy = XboxController()
+currently_stopped = True
 
 while True:
     time.sleep(.10)
-    print(joy.read())
+    # print(joy.read())
     left_stick_controller_input = joy.read()[0]  # controls speed
     right_stick_controller_input = joy.read()[1]  # controls turning
-    print(left_stick_controller_input)
+    # print(left_stick_controller_input)
     print(right_stick_controller_input)
 
-  # Turning left or right
+  # Turning left or right (this only affects the servos)
     RADIUS = maxRADIUS - maxRADIUS * right_stick_controller_input
     if RADIUS < minRADIUS:
       RADIUS  = 0
@@ -192,19 +208,27 @@ while True:
       direction = "left"
       control_servo(D1, D2, D3, D4, RADIUS, direction)
     else:
-      print("Calling control_servo function")
       RADIUS = 0
       direction = "forward"
       control_servo(D1, D2, D3, D4, RADIUS, direction)
 
-    #moving just forward and backwards
+    #moving just forward and backwards (this only affects the roboclaws)
     if left_stick_controller_input > 0.15:
       speed = int(MIN_SPEED + ((MAX_SPEED * left_stick_controller_input)-MIN_SPEED))
-      move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction) 
+      move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction)
+      currently_stopped = False 
     elif left_stick_controller_input < -0.15:
       speed = int(MIN_SPEED + ((MAX_SPEED * left_stick_controller_input)-MIN_SPEED))
       move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction)
+      currently_stopped = False
     else:
+      if currently_stopped == True:
+        continue
       print("Calling move_turn function")
       speed = 0
       move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction)  
+      currently_stopped = True
+
+    
+
+
