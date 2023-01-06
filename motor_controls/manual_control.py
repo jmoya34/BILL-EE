@@ -4,6 +4,7 @@ import math
 from inputs import devices
 import time
 from control_mapping import XboxController
+from datetime import datetime
 
 
 
@@ -19,10 +20,10 @@ MIN_SPEED = 30
 
 baudrate = 38400
 
-address = [0x81, 0x82, 0x83]
+address = [0x80, 0x82, 0x81]
 roboclaw1 = Roboclaw("/dev/ttyACM0", baudrate) # Front Wheels, M1 = right, M2 = left
 roboclaw2 = Roboclaw("/dev/ttyACM1", baudrate) # Middle Wheels, M1 = right, M2 = left
-roboclaw3 = Roboclaw("/dev/ttyACM3", baudrate) # Rear Wheels, M1 = right, M2 = left
+roboclaw3 = Roboclaw("/dev/ttyACM2", baudrate) # Rear Wheels, M1 = right, M2 = left
 
 roboclaw1.Open()
 roboclaw2.Open()
@@ -35,21 +36,49 @@ maxRADIUS = 100 # maximum turning radius
 minRADIUS = 20 #
 
 def move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction):
-    # roboclaw 0x81 controls 1, 4 (front wheels)
-    # roboclaw 0x82 controls 2, 5 (middle wheels)
-    # roboclaw 0x83 controls 3, 6 (back wheels)
+    # roboclaw 0x80 controls 1, 4 (front wheels)
+    # roboclaw 0x81 controls 2, 5 (middle wheels)
+    # roboclaw 0x82 controls 3, 6 (back wheels)
+    reverse = False
+    if speed < 0:
+      reverse = True
+      speed = speed * -1
+
+
     if(RADIUS == 0):
       motor_velocities = [speed,speed,speed,speed,speed,speed] # Kerchoo THIS IS GOOD PROGRAMMING I SWEAR!!!
     else:
       motor_velocities = calculate_motor_velocity(D1, D2, D3, D4, RADIUS, speed,
                                                 direction)
-    roboclaw1.ForwardM1(address[0], motor_velocities[3]) # V4
-    roboclaw1.ForwardM2(address[0], motor_velocities[0]) # V1
-    roboclaw2.ForwardM1(address[1], motor_velocities[4]) # V5
-    roboclaw2.ForwardM2(address[1], motor_velocities[1]) # V2
-    roboclaw3.ForwardM1(address[2], motor_velocities[5]) # V6
-    roboclaw3.ForwardM2(address[2], motor_velocities[2]) # V3
-    print("Motor velocities: ", motor_velocities)
+    print("Moving motors specific speed")
+    start_time = datetime.now()
+    
+    if not reverse:
+      roboclaw1.ForwardM1(address[0], motor_velocities[3]) # V4
+      roboclaw1.ForwardM2(address[0], motor_velocities[0]) # V1
+      time.sleep(.06)
+      roboclaw2.ForwardM1(address[1], motor_velocities[4]) # V5
+      roboclaw2.ForwardM2(address[1], motor_velocities[1]) # V2
+      time.sleep(.06)
+      roboclaw3.ForwardM1(address[2], motor_velocities[5]) # V6
+      roboclaw3.ForwardM2(address[2], motor_velocities[2]) # V3
+      end_time = datetime.now()
+      print('Duration: {}'.format(end_time - start_time))
+      print("Motor velocities: ", motor_velocities)
+    
+    else:
+      roboclaw1.BackwardM1(address[0], motor_velocities[3]) # V4
+      roboclaw1.BackwardM2(address[0], motor_velocities[0]) # V1
+      time.sleep(.06)
+      roboclaw2.BackwardM1(address[1], motor_velocities[4]) # V5
+      roboclaw2.BackwardM2(address[1], motor_velocities[1]) # V2
+      time.sleep(.06)
+      roboclaw3.BackwardM1(address[2], motor_velocities[5]) # V6
+      roboclaw3.BackwardM2(address[2], motor_velocities[2]) # V3
+      end_time = datetime.now()
+
+      print('Duration: {}'.format(end_time - start_time))
+      print("Motor velocities: ", motor_velocities)
 
 def control_servo(D1, D2, D3, D4, RADIUS, direction):
     # if controller values (+) True calculate angle to the right, else calculate angles to the left
@@ -163,21 +192,19 @@ while True:
       direction = "left"
       control_servo(D1, D2, D3, D4, RADIUS, direction)
     else:
+      print("Calling control_servo function")
       RADIUS = 0
       direction = "forward"
       control_servo(D1, D2, D3, D4, RADIUS, direction)
 
     #moving just forward and backwards
     if left_stick_controller_input > 0.15:
-      speed = int(MAX_SPEED * left_stick_controller_input)
+      speed = int(MIN_SPEED + ((MAX_SPEED * left_stick_controller_input)-MIN_SPEED))
       move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction) 
     elif left_stick_controller_input < -0.15:
-      speed = int(MAX_SPEED * -1 * left_stick_controller_input)
+      speed = int(MIN_SPEED + ((MAX_SPEED * left_stick_controller_input)-MIN_SPEED))
       move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction)
     else:
+      print("Calling move_turn function")
       speed = 0
       move_turn(address, speed, D1, D2, D3, D4, RADIUS, direction)  
-
-    
-
-

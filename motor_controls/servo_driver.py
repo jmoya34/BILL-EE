@@ -1,7 +1,7 @@
-from time import *
+import time
 from adafruit_servokit import ServoKit
 
-kit = ServoKit(channels = 4)
+kit = ServoKit(channels = 16)
 
 kit.servo[0].angle = 0
 kit.servo[1].angle = 0
@@ -13,12 +13,12 @@ def right_turn():
         if i % 2 == 0:
             kit.servo[i].angle = 45
         if i % 2 == 1:
-            kit.servo[i].angle = -45
+            kit.servo[i].angle = 0
 
 def left_turn():
     for i in range(len(kit.servo)):
         if i % 2 == 0:
-            kit.servo[i].angle = -45
+            kit.servo[i].angle = 0
         if i % 2 == 1:
             kit.servo[i].angle = 45
 
