@@ -31,7 +31,7 @@ fi
 
 # Changing Cmake script
 search_cmake_string="# uncomment the following section in order to fill in"
-input_cmake_var="find_package(ament_cmake_python REQUIRED)\nfind_package(rclpy REQUIRED)\nament_python_install_package(scripts\/)"
+input_cmake_var="find_package(ament_cmake_python REQUIRED)\nfind_package(rclpy REQUIRED)\nament_python_install_package(scripts)"
 
 # Automatically searches for all the scripts and addes them to CMake file
 cd "/home/${WHOAMI}/Desktop/billee_ws/src/billee_pkg/scripts"

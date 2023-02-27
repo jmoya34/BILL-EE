@@ -34,15 +34,8 @@ if ! grep -q "<depend>rclpy<\/depend>" "${file_path}/package.xml"; then
 fi
 
 # Changing Cmake script
-ros_verion="$(echo $ROS_DISTRO)"
-amentChange="\/"
-if "$ros_verion" == "humble"
-then
-    amentChange=""
-fi
-
 search_cmake_string="# uncomment the following section in order to fill in"
-input_cmake_var="find_package(ament_cmake_python REQUIRED)\nfind_package(rclpy REQUIRED)\nament_python_install_package(scripts$amentChange)"
+input_cmake_var="find_package(ament_cmake_python REQUIRED)\nfind_package(rclpy REQUIRED)\nament_python_install_package(scripts)"
 
 # Automatically searches for all the scripts and addes them to CMake file
 cd "/home/${WHOAMI}/Desktop/$ws_name/src/$pkg_name/scripts"
